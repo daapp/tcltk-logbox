@@ -17,6 +17,9 @@ snit::widget widget::logbox {
     component list -public list
 
     option -lines -default 1000
+    # tag: {tagName {foreground background} ...}
+    option -tags -default ""
+
     delegate option -title to hull as -text
     delegate option -relief to hull
 
@@ -53,7 +56,10 @@ snit::widget widget::logbox {
         set log [list]
     }
 
+    # add ?-tag name? ?fmt? message
     method add {args} {
+        set tag [from args -tag ""]
+
         if {[llength $args] == 1} {
             lappend log [lindex $args 0]
         } else {
@@ -62,6 +68,11 @@ snit::widget widget::logbox {
 
         if {[$list index end] > $options(-lines)} {
             $list delete 0
+        }
+
+        if {$tag ne "" && [dict exists $options(-tags) $tag]} {
+            lassign [dict get $options(-tags) $tag] fg bg
+            $list itemconfigure end -foreground $fg -background $bg
         }
 
         $list yview end
