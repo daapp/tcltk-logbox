@@ -63,16 +63,16 @@ snit::widget widget::logbox {
         if {[llength $args] == 1} {
             lappend log [lindex $args 0]
         } else {
-            lappend log [format {*}$args]
-        }
-
-        if {[$list index end] > $options(-lines)} {
-            $list delete 0
+            lappend log [msgcat::mc {*}$args]
         }
 
         if {$tag ne "" && [dict exists $options(-tags) $tag]} {
             lassign [dict get $options(-tags) $tag] fg bg
             $list itemconfigure end -foreground $fg -background $bg
+        }
+
+        if {[$list index end] > $options(-lines)} {
+            $list delete 0
         }
 
         $list yview end
