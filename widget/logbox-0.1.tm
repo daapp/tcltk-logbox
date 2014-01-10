@@ -12,7 +12,7 @@ package require msgcat
 option add *Logbox.menu.tearOff false
 
 snit::widget widget::logbox {
-    hulltype ttk::labelframe
+    hulltype ttk::frame
 
     component list -public list
 
@@ -20,16 +20,15 @@ snit::widget widget::logbox {
     # tag: {tagName {foreground background} ...}
     option -tags -default ""
 
-    delegate option -title to hull as -text
-    delegate option -relief to hull
+    delegate option * to hull
 
     variable log [list]; # for listbox
 
     constructor {args} {
-        scrollbar $win.sx -orient horizontal -command [list $win.list xview]
-        scrollbar $win.sy -orient vertical   -command [list $win.list yview]
+        ttk::scrollbar $win.sx -orient horizontal -command [list $win.list xview]
+        ttk::scrollbar $win.sy -orient vertical   -command [list $win.list yview]
 
-        install list using listbox $win.list -height 1\
+        install list using listbox $win.list -height 1 \
             -listvariable [myvar log] \
             -xscrollcommand [list $win.sx set] \
             -yscrollcommand [list $win.sy set]
@@ -42,19 +41,19 @@ snit::widget widget::logbox {
         grid rowconfigure    $win $win.list -weight 1
 
         menu $win.menu
-        $win.menu add command -label [msgcat::mc "Save"] \
-            -command [mymethod save]
-        $win.menu add command -label [msgcat::mc "Clear"] \
-            -command [mymethod clear]
+        $win.menu add command -label [msgcat::mc "Save"]  -command [mymethod save]
+        $win.menu add command -label [msgcat::mc "Clear"] -command [mymethod clear]
 
         bind $win.list <Button-3> [list tk_popup $win.menu %X %Y]
 
         $self configurelist $args
     }
 
+
     method clear {} {
         set log [list]
     }
+
 
     # add ?-tag name? ?fmt? message
     method add {args} {
@@ -80,6 +79,7 @@ snit::widget widget::logbox {
         return
     }
 
+
     method save {{filename ""}} {
         if {$filename eq ""} {
             set filename [tk_getSaveFile -filetypes {{{All Files} *}}]
@@ -91,6 +91,7 @@ snit::widget widget::logbox {
             $self SaveToFile $filename
         }
     }
+
 
     method SaveToFile {filename} {
         if {[catch {set f [open $filename w]} errorMessage]} {
