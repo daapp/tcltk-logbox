@@ -20,7 +20,7 @@ snit::widget widget::logbox {
     # tag: {tagName {foreground background} ...}
     option -tags -default ""
 
-    delegate option * to hull
+    delegate option * to list
 
     variable log [list]; # for listbox
 
